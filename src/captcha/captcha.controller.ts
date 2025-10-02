@@ -30,8 +30,10 @@ export class CaptchaController {
         },
         svg: {
           type: 'string',
-          description: 'SVG image displaying a math operation with two single-digit numbers',
-          example: '<svg xmlns="http://www.w3.org/2000/svg" width="250" height="70">...</svg>',
+          description:
+            'SVG image displaying a math operation with two single-digit numbers',
+          example:
+            '<svg xmlns="http://www.w3.org/2000/svg" width="250" height="70">...</svg>',
         },
       },
     },
