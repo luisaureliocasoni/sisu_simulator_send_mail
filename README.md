@@ -25,7 +25,7 @@
 
 Send Mail API - A secure email service built with NestJS 10 that provides:
 - SMTP email sending with TLS encryption
-- Self-hosted CAPTCHA protection (no third-party dependencies)
+- Self-hosted math CAPTCHA protection (simple arithmetic with single-digit numbers)
 - Input sanitization for security
 - CORS protection for localhost and *.sisusimulator.com.br
 - Swagger API documentation at `/docs`
@@ -46,13 +46,18 @@ $ cp .env.example .env
 2. Edit `.env` and configure your SMTP settings:
 ```
 SMTP_HOST=smtp.your-provider.com
-SMTP_PORT=587
+SMTP_PORT=587              # Use 587 for STARTTLS or 465 for SSL/TLS
 SMTP_USER=your-email@example.com
 SMTP_PASSWORD=your-password
 MAIL_TO_DESTINATION=recipient@example.com
 SENDER_NAME=SISU Simulator Contact Form
 PORT=3000
 ```
+
+### SMTP Port Configuration
+- **Port 587**: STARTTLS (recommended) - starts unencrypted, upgrades to TLS
+- **Port 465**: SSL/TLS - encrypted from the start
+- The application automatically detects the port and configures encryption accordingly
 
 ## Compile and run the project
 
@@ -77,15 +82,20 @@ Once the application is running, visit `http://localhost:3000/docs` to see the i
 ```
 GET /captcha
 ```
-Returns a CAPTCHA challenge with a token and SVG image.
+Returns a math CAPTCHA challenge (e.g., "3 + 5 = ?") with a token and SVG image.
 
 **Response:**
 ```json
 {
-  "token": "a1b2c3d4...",
-  "svg": "<svg>...</svg>"
+  "token": "a1b2c3d4e5f6...",
+  "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"250\" height=\"70\">...</svg>"
 }
 ```
+
+The SVG displays a simple math operation with two single-digit numbers using one of these operations:
+- Addition (+)
+- Subtraction (-)
+- Multiplication (×)
 
 ### 2. Send Email
 ```
@@ -100,9 +110,11 @@ Content-Type: application/json
   "email": "john@example.com",
   "message": "Your message here",
   "captchaToken": "token-from-captcha-endpoint",
-  "captchaAnswer": "ABC123"
+  "captchaAnswer": "8"
 }
 ```
+
+**Note:** The `captchaAnswer` should be the numeric result of the math operation shown in the CAPTCHA image.
 
 **Response:**
 ```json
@@ -113,11 +125,40 @@ Content-Type: application/json
 
 ## Security Features
 
-- **CAPTCHA Protection**: Self-hosted CAPTCHA with 5-minute expiration
+- **Math CAPTCHA Protection**: Self-hosted arithmetic CAPTCHA with 5-minute expiration and one-time use tokens. Users must solve simple math problems (e.g., "7 + 3 = ?") with single-digit numbers.
 - **Input Sanitization**: All message content is sanitized to prevent XSS attacks
 - **CORS Protection**: Only allows requests from localhost and *.sisusimulator.com.br
-- **TLS Encryption**: SMTP connection uses TLS encryption
+- **TLS Encryption**: SMTP connection with STARTTLS (port 587) or SSL/TLS (port 465) support
+  - Automatically configures `secure` mode based on port
+  - Forces TLS with `requireTLS: true`
+  - SSLv3 cipher configuration
 - **Validation**: Strong DTO validation with class-validator
+
+## Troubleshooting
+
+### SMTP Authentication Errors
+
+If you receive `535 5.7.8 Error: authentication failed`, try these solutions:
+
+1. **Check credentials**: Verify `SMTP_USER` and `SMTP_PASSWORD` are correct
+
+2. **Use app-specific password**: Many providers (Gmail, Outlook) require app-specific passwords instead of your account password
+   - Gmail: https://myaccount.google.com/apppasswords
+   - Outlook: Account settings → Security → App passwords
+
+3. **Enable "Less secure apps"** (if using legacy Gmail):
+   - Not recommended, use app-specific passwords instead
+
+4. **Try different port**:
+   - Change `SMTP_PORT=587` to `SMTP_PORT=465`
+   - Or vice versa
+
+5. **Check SMTP host**: Ensure `SMTP_HOST` is correct
+   - Gmail: `smtp.gmail.com`
+   - Outlook: `smtp-mail.outlook.com` or `smtp.office365.com`
+   - Yahoo: `smtp.mail.yahoo.com`
+
+6. **Firewall/Network**: Ensure ports 587 or 465 are not blocked
 
 ## Run tests
 

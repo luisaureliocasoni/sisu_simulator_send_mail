@@ -35,8 +35,8 @@ export class SendMailDto {
   captchaToken: string;
 
   @ApiProperty({
-    description: 'CAPTCHA answer provided by user',
-    example: 'ABC123',
+    description: 'CAPTCHA answer provided by user (numeric result of the math operation)',
+    example: '8',
   })
   @IsString()
   @IsNotEmpty()

@@ -9,15 +9,19 @@ export class MailService {
   private transporter: nodemailer.Transporter;
 
   constructor(private configService: ConfigService) {
+    const smtpPort = this.configService.get<number>('smtp.port');
+
     this.transporter = nodemailer.createTransport({
       host: this.configService.get<string>('smtp.host'),
-      port: this.configService.get<number>('smtp.port'),
-      secure: false, // TLS
+      port: smtpPort,
+      secure: smtpPort === 465, // true for port 465 (SSL/TLS), false for port 587 (STARTTLS)
+      requireTLS: true, // Force TLS connection
       auth: {
         user: this.configService.get<string>('smtp.auth.user'),
         pass: this.configService.get<string>('smtp.auth.pass'),
       },
       tls: {
+        ciphers: 'SSLv3',
         rejectUnauthorized: false,
       },
     });
