@@ -27,7 +27,7 @@ Send Mail API - A secure email service built with NestJS 10 that provides:
 - SMTP email sending with TLS encryption
 - Self-hosted math CAPTCHA protection (simple arithmetic with single-digit numbers)
 - Input sanitization for security
-- CORS protection for localhost and *.sisusimulator.com.br
+- CORS protection for localhost and *.sisusimulator.com.br and *.notadecorte.app
 - Swagger API documentation at `/docs`
 
 ## Project setup
@@ -127,7 +127,7 @@ Content-Type: application/json
 
 - **Math CAPTCHA Protection**: Self-hosted arithmetic CAPTCHA with 5-minute expiration and one-time use tokens. Users must solve simple math problems (e.g., "7 + 3 = ?") with single-digit numbers.
 - **Input Sanitization**: All message content is sanitized to prevent XSS attacks
-- **CORS Protection**: Only allows requests from localhost and *.sisusimulator.com.br
+- **CORS Protection**: Only allows requests from localhost and *.sisusimulator.com.br and *.notadecorte.app
 - **TLS Encryption**: SMTP connection with STARTTLS (port 587) or SSL/TLS (port 465) support
   - Automatically configures `secure` mode based on port
   - Forces TLS with `requireTLS: true`

@@ -6,7 +6,7 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Enable CORS for localhost and *.sisusimulator.com.br
+  // Enable CORS for localhost and *.sisusimulator.com.br and and *.notadecorte.app
   app.enableCors({
     origin: (origin, callback) => {
       if (!origin) {
@@ -18,6 +18,7 @@ async function bootstrap() {
         /^http:\/\/localhost(:\d+)?$/,
         /^https:\/\/localhost(:\d+)?$/,
         /^https?:\/\/.*\.sisusimulator\.com\.br$/,
+        /^https?:\/\/.*\.notadecorte\.app$/,
       ];
 
       const isAllowed = allowedOrigins.some((pattern) => pattern.test(origin));
